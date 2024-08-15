@@ -1,7 +1,7 @@
 import BitcoinCore
 import Foundation
-import HdWalletKit
-import HsToolKit
+import HDWalletKit
+import WWToolKit
 import Scrypt
 
 public class Kit: AbstractKit {
@@ -11,7 +11,7 @@ public class Kit: AbstractKit {
 
     public static let defaultScryptParams = (length: 32, N: UInt64(1024), r: UInt32(1), p: UInt32(1))
     static let defaultHasher: (Data) -> Data = { data in
-        let pass = data.hs.bytes
+        let pass = data.ww.bytes
         let bytes = try? Scrypt.scrypt(
             password: pass,
             salt: pass,

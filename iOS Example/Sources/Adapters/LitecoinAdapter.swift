@@ -1,6 +1,6 @@
 import BitcoinCore
-import HdWalletKit
-import HsToolKit
+import HDWalletKit
+import WWToolKit
 import LitecoinKit
 
 class LitecoinAdapter: BaseAdapter {
