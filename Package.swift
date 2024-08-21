@@ -14,9 +14,9 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/sunimp/BitcoinCore.Swift.git", .upToNextMajor(from: "3.0.2")),
+        .package(url: "https://github.com/sunimp/BitcoinCore.Swift.git", .upToNextMajor(from: "3.0.3")),
         .package(url: "https://github.com/greymass/swift-scrypt.git", from: "1.0.0"),
-        .package(url: "https://github.com/sunimp/WWToolKit.Swift.git", .upToNextMajor(from: "2.0.6")),
+        .package(url: "https://github.com/sunimp/WWToolKit.Swift.git", .upToNextMajor(from: "2.0.7")),
     ],
     targets: [
         .target(

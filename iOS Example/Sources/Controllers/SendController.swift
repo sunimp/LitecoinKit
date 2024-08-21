@@ -1,6 +1,14 @@
-import BitcoinCore
-import Combine
+//
+//  SendController.swift
+//  LitecoinKit-Example
+//
+//  Created by Sun on 2024/8/21.
+//
+
 import UIKit
+import Combine
+
+import BitcoinCore
 
 class SendController: UIViewController {
     private var cancellables = Set<AnyCancellable>()

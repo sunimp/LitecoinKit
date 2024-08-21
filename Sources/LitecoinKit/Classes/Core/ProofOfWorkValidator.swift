@@ -1,6 +1,14 @@
+//
+//  ProofOfWorkValidator.swift
+//  LitecoinKit
+//
+//  Created by Sun on 2024/8/21.
+//
+
+import Foundation
+
 import BigInt
 import BitcoinCore
-import Foundation
 
 class ProofOfWorkValidator: IBlockValidator {
     var hasher: (Data) -> Data

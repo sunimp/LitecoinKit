@@ -18,7 +18,7 @@ Because Litecoin uses Bitcoin's source code, the usage of this package has no di
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/sunimp/LitecoinKit.Swift.git", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/sunimp/LitecoinKit.Swift.git", .upToNextMajor(from: "3.0.3"))
 ]
 ```
 

@@ -11,6 +11,7 @@
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		6BC11A5D28EEC7D30001FDF1 /* LitecoinAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC11A5C28EEC7D30001FDF1 /* LitecoinAdapter.swift */; };
 		6BC11A6128EECBE90001FDF1 /* LitecoinKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6BC11A6028EECBE90001FDF1 /* LitecoinKit */; };
+		A40806092C75FBF0003947F1 /* UIExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = A40806082C75FBF0003947F1 /* UIExtensions */; };
 		D36AAA9823A2125E0065B32B /* BaseAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36AAA7F23A2125D0065B32B /* BaseAdapter.swift */; };
 		D36AAA9923A2125E0065B32B /* SendController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D36AAA8123A2125D0065B32B /* SendController.xib */; };
 		D36AAA9A23A2125E0065B32B /* BalanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36AAA8223A2125D0065B32B /* BalanceController.swift */; };
@@ -64,6 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A40806092C75FBF0003947F1 /* UIExtensions in Frameworks */,
 				6BC11A6128EECBE90001FDF1 /* LitecoinKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -175,6 +177,7 @@
 			name = "iOS Example";
 			packageProductDependencies = (
 				6BC11A6028EECBE90001FDF1 /* LitecoinKit */,
+				A40806082C75FBF0003947F1 /* UIExtensions */,
 			);
 			productName = LitecoinKit;
 			productReference = 6BC11A5E28EEC7EC0001FDF1 /* LitecoinKit Demo.app */;
@@ -209,6 +212,7 @@
 			mainGroup = 607FACC71AFB9204008FA782;
 			packageReferences = (
 				6B7C7E6228EC00770053F11A /* XCRemoteSwiftPackageReference "Cuckoo" */,
+				A40806072C75FBF0003947F1 /* XCRemoteSwiftPackageReference "UIExtensions.Swift" */,
 			);
 			productRefGroup = 607FACC71AFB9204008FA782;
 			projectDirPath = "";
@@ -383,7 +387,7 @@
 					"@executable_path/Frameworks",
 				);
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.horizontalsystems.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sunimp.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "LitecoinKit Demo";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
@@ -401,7 +405,7 @@
 					"@executable_path/Frameworks",
 				);
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.horizontalsystems.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.sunimp.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "LitecoinKit Demo";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
@@ -440,12 +444,25 @@
 				minimumVersion = 1.0.0;
 			};
 		};
+		A40806072C75FBF0003947F1 /* XCRemoteSwiftPackageReference "UIExtensions.Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sunimp/UIExtensions.Swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		6BC11A6028EECBE90001FDF1 /* LitecoinKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LitecoinKit;
+		};
+		A40806082C75FBF0003947F1 /* UIExtensions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A40806072C75FBF0003947F1 /* XCRemoteSwiftPackageReference "UIExtensions.Swift" */;
+			productName = UIExtensions;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
