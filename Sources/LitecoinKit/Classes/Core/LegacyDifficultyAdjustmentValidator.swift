@@ -18,7 +18,13 @@ class LegacyDifficultyAdjustmentValidator: IBlockChainedValidator {
     let difficultyEncoder: IDifficultyEncoder
     let blockValidatorHelper: IBlockValidatorHelper
 
-    init(encoder: IDifficultyEncoder, blockValidatorHelper: IBlockValidatorHelper, heightInterval: Int, targetTimespan: Int, maxTargetBits: Int) {
+    init(
+        encoder: IDifficultyEncoder,
+        blockValidatorHelper: IBlockValidatorHelper,
+        heightInterval: Int,
+        targetTimespan: Int,
+        maxTargetBits: Int
+    ) {
         difficultyEncoder = encoder
         self.blockValidatorHelper = blockValidatorHelper
 
