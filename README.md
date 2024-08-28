@@ -8,9 +8,9 @@ Because Litecoin uses Bitcoin's source code, the usage of this package has no di
 
 ## Prerequisites
 
-* Xcode 10.0+
-* Swift 5+
-* iOS 13+
+* Xcode 15.0+
+* Swift 5.10+
+* iOS 14+
 
 ## Installation
 
@@ -18,7 +18,7 @@ Because Litecoin uses Bitcoin's source code, the usage of this package has no di
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/sunimp/LitecoinKit.Swift.git", .upToNextMajor(from: "3.0.3"))
+    .package(url: "https://github.com/sunimp/LitecoinKit.Swift.git", .upToNextMajor(from: "3.1.1"))
 ]
 ```
 

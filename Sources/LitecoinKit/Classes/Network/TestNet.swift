@@ -23,7 +23,7 @@ class TestNet: INetwork {
     let coinType: UInt32 = 1
     let sigHash: SigHashType = .bitcoinAll
     var syncableFromApi = false
-    var blockchairChainID = ""
+    var blockchairChainId = ""
 
     let dnsSeeds = [
         "testnet-seed.ltc.xurious.com",

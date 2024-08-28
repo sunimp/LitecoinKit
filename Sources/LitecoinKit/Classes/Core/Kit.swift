@@ -58,7 +58,7 @@ public class Kit: AbstractKit {
         extendedKey: HDExtendedKey?,
         watchAddressPublicKey: WatchAddressPublicKey?,
         purpose: Purpose,
-        walletID: String,
+        walletId: String,
         syncMode: BitcoinCore.SyncMode = .api,
         hasher: ((Data) -> Data)?,
         networkType: NetworkType = .mainNet,
@@ -67,8 +67,8 @@ public class Kit: AbstractKit {
     ) throws {
         let network = networkType.network
         let logger = logger ?? Logger(minLogLevel: .verbose)
-        let databaseFilePath = try DirectoryHelper.directoryURL(for: Kit.name).appendingPathComponent(Kit.databaseFileName(
-            walletID: walletID,
+        let databaseFilePath = try DirectoryHelper.directoryUrl(for: Kit.name).appendingPathComponent(Kit.databaseFileName(
+            walletId: walletId,
             networkType: networkType,
             purpose: purpose,
             syncMode: syncMode
@@ -80,11 +80,11 @@ public class Kit: AbstractKit {
         )
 
         let apiTransactionProvider: IApiTransactionProvider
-        let blockchairApi = BlockchairApi(chainID: network.blockchairChainID, logger: logger)
+        let blockchairApi = BlockchairApi(chainId: network.blockchairChainId, logger: logger)
         let sendType = BitcoinCore.SendType.api(blockchairApi: blockchairApi)
         switch networkType {
         case .mainNet:
-            let apiTransactionProviderURL = "https://ltc.blocksdecoded.com/api"
+            let apiTransactionProviderUrl = "https://ltc.blocksdecoded.com/api"
 
             if case .blockchair = syncMode {
                 let blockchairBlockHashFetcher = BlockchairBlockHashFetcher(blockchairApi: blockchairApi)
@@ -92,7 +92,7 @@ public class Kit: AbstractKit {
                     blockchairApi: blockchairApi,
                     blockHashFetcher: blockchairBlockHashFetcher
                 )
-                let bCoinApiProvider = BCoinApi(url: apiTransactionProviderURL, logger: logger)
+                let bCoinApiProvider = BCoinApi(url: apiTransactionProviderUrl, logger: logger)
 
                 apiTransactionProvider = BiApiBlockProvider(
                     restoreProvider: bCoinApiProvider,
@@ -100,7 +100,7 @@ public class Kit: AbstractKit {
                     apiSyncStateManager: apiSyncStateManager
                 )
             } else {
-                apiTransactionProvider = BCoinApi(url: apiTransactionProviderURL, logger: logger)
+                apiTransactionProvider = BCoinApi(url: apiTransactionProviderUrl, logger: logger)
             }
 
         case .testNet:
@@ -150,7 +150,7 @@ public class Kit: AbstractKit {
             .set(extendedKey: extendedKey)
             .set(watchAddressPublicKey: watchAddressPublicKey)
             .set(paymentAddressParser: paymentAddressParser)
-            .set(walletID: walletID)
+            .set(walletId: walletId)
             .set(confirmationsThreshold: confirmationsThreshold)
             .set(peerSize: 10)
             .set(syncMode: syncMode)
@@ -182,7 +182,7 @@ public class Kit: AbstractKit {
     public convenience init(
         seed: Data,
         purpose: Purpose,
-        walletID: String,
+        walletId: String,
         syncMode: BitcoinCore.SyncMode = .api,
         hasher: ((Data) -> Data)?,
         networkType: NetworkType = .mainNet,
@@ -201,7 +201,7 @@ public class Kit: AbstractKit {
         try self.init(
             extendedKey: .private(key: masterPrivateKey),
             purpose: purpose,
-            walletID: walletID,
+            walletId: walletId,
             syncMode: syncMode,
             hasher: hasher,
             networkType: networkType,
@@ -213,7 +213,7 @@ public class Kit: AbstractKit {
     public convenience init(
         extendedKey: HDExtendedKey,
         purpose: Purpose,
-        walletID: String,
+        walletId: String,
         syncMode: BitcoinCore.SyncMode = .api,
         hasher: ((Data) -> Data)?,
         networkType: NetworkType = .mainNet,
@@ -226,7 +226,7 @@ public class Kit: AbstractKit {
             extendedKey: extendedKey,
             watchAddressPublicKey: nil,
             purpose: purpose,
-            walletID: walletID,
+            walletId: walletId,
             syncMode: syncMode,
             hasher: hasher,
             networkType: networkType,
@@ -246,7 +246,7 @@ public class Kit: AbstractKit {
     public convenience init(
         watchAddress: String,
         purpose: Purpose,
-        walletID: String,
+        walletId: String,
         syncMode: BitcoinCore.SyncMode = .api,
         hasher: ((Data) -> Data)?,
         networkType: NetworkType = .mainNet,
@@ -274,7 +274,7 @@ public class Kit: AbstractKit {
             extendedKey: nil,
             watchAddressPublicKey: publicKey,
             purpose: purpose,
-            walletID: walletID,
+            walletId: walletId,
             syncMode: syncMode,
             hasher: hasher,
             networkType: networkType,
@@ -287,17 +287,17 @@ public class Kit: AbstractKit {
 }
 
 extension Kit {
-    public static func clear(exceptFor walletIDsToExclude: [String] = []) throws {
-        try DirectoryHelper.removeAll(inDirectory: Kit.name, except: walletIDsToExclude)
+    public static func clear(exceptFor walletIdsToExclude: [String] = []) throws {
+        try DirectoryHelper.removeAll(inDirectory: Kit.name, except: walletIdsToExclude)
     }
     
     private static func databaseFileName(
-        walletID: String,
+        walletId: String,
         networkType: NetworkType,
         purpose: Purpose,
         syncMode: BitcoinCore.SyncMode
     ) -> String {
-        "\(walletID)-\(networkType.rawValue)-\(purpose.description)-\(syncMode)"
+        "\(walletId)-\(networkType.rawValue)-\(purpose.description)-\(syncMode)"
     }
     
     private static func addressConverter(purpose: Purpose, network: INetwork) -> AddressConverterChain {
