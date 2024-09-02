@@ -1,8 +1,7 @@
 //
 //  Kit.swift
-//  LitecoinKit
 //
-//  Created by Sun on 2024/8/21.
+//  Created by Sun on 2018/8/10.
 //
 
 import Foundation
@@ -15,11 +14,28 @@ import WWToolKit
 // MARK: - Kit
 
 public class Kit: AbstractKit {
-    private static let heightInterval = 2016 // Default block count in difficulty change circle
-    private static let targetSpacing = Int(2.5 * 60) // Time to mining one block
-    private static let maxTargetBits = 0x1E0F_FFFF // Initially and max. target difficulty for blocks
+    // MARK: Nested Types
+
+    public enum NetworkType: String, CaseIterable {
+        case mainNet
+        case testNet
+
+        // MARK: Computed Properties
+
+        var network: INetwork {
+            switch self {
+            case .mainNet:
+                MainNet()
+            case .testNet:
+                TestNet()
+            }
+        }
+    }
+
+    // MARK: Static Properties
 
     public static let defaultScryptParams = (length: 32, N: UInt64(1024), r: UInt32(1), p: UInt32(1))
+
     static let defaultHasher: (Data) -> Data = { data in
         let pass = data.ww.bytes
         let bytes = try? Scrypt.scrypt(
@@ -33,20 +49,13 @@ public class Kit: AbstractKit {
         return Data(bytes ?? [])
     }
 
+    private static let heightInterval = 2016 // Default block count in difficulty change circle
+    private static let targetSpacing = Int(2.5 * 60) // Time to mining one block
+    private static let maxTargetBits = 0x1E0FFFFF // Initially and max. target difficulty for blocks
+
     private static let name = "LitecoinKit"
 
-    public enum NetworkType: String, CaseIterable {
-        case mainNet, testNet
-
-        var network: INetwork {
-            switch self {
-            case .mainNet:
-                MainNet()
-            case .testNet:
-                TestNet()
-            }
-        }
-    }
+    // MARK: Computed Properties
 
     public weak var delegate: BitcoinCoreDelegate? {
         didSet {
@@ -54,11 +63,119 @@ public class Kit: AbstractKit {
         }
     }
 
+    // MARK: Lifecycle
+
+    public convenience init(
+        seed: Data,
+        purpose: Purpose,
+        walletID: String,
+        syncMode: BitcoinCore.SyncMode = .api,
+        hasher: ((Data) -> Data)?,
+        networkType: NetworkType = .mainNet,
+        confirmationsThreshold: Int = 6,
+        logger: Logger?
+    ) throws {
+        let version: HDExtendedKeyVersion =
+            switch purpose {
+            case .bip44: .Ltpv
+            case .bip49: .Mtpv
+            case .bip84: .zprv
+            case .bip86: .xprv
+            }
+        let masterPrivateKey = HDPrivateKey(seed: seed, xPrivKey: version.rawValue)
+
+        try self.init(
+            extendedKey: .private(key: masterPrivateKey),
+            purpose: purpose,
+            walletID: walletID,
+            syncMode: syncMode,
+            hasher: hasher,
+            networkType: networkType,
+            confirmationsThreshold: confirmationsThreshold,
+            logger: logger
+        )
+    }
+
+    public convenience init(
+        extendedKey: HDExtendedKey,
+        purpose: Purpose,
+        walletID: String,
+        syncMode: BitcoinCore.SyncMode = .api,
+        hasher: ((Data) -> Data)?,
+        networkType: NetworkType = .mainNet,
+        confirmationsThreshold: Int = 6,
+        logger: Logger?
+    ) throws {
+        let network = networkType.network
+
+        try self.init(
+            extendedKey: extendedKey,
+            watchAddressPublicKey: nil,
+            purpose: purpose,
+            walletID: walletID,
+            syncMode: syncMode,
+            hasher: hasher,
+            networkType: networkType,
+            confirmationsThreshold: confirmationsThreshold,
+            logger: logger
+        )
+
+        let scriptConverter = ScriptConverter()
+        let bech32AddressConverter = SegWitBech32AddressConverter(
+            prefix: network.bech32PrefixPattern,
+            scriptConverter: scriptConverter
+        )
+
+        bitcoinCore.prepend(addressConverter: bech32AddressConverter)
+    }
+
+    public convenience init(
+        watchAddress: String,
+        purpose: Purpose,
+        walletID: String,
+        syncMode: BitcoinCore.SyncMode = .api,
+        hasher: ((Data) -> Data)?,
+        networkType: NetworkType = .mainNet,
+        confirmationsThreshold: Int = 6,
+        logger: Logger?
+    ) throws {
+        let network = networkType.network
+        let scriptConverter = ScriptConverter()
+        let bech32AddressConverter = SegWitBech32AddressConverter(
+            prefix: network.bech32PrefixPattern,
+            scriptConverter: scriptConverter
+        )
+        let base58AddressConverter = Base58AddressConverter(
+            addressVersion: network.pubKeyHash,
+            addressScriptVersion: network.scriptHash
+        )
+        let parserChain = AddressConverterChain()
+        parserChain.prepend(addressConverter: base58AddressConverter)
+        parserChain.prepend(addressConverter: bech32AddressConverter)
+
+        let address = try parserChain.convert(address: watchAddress)
+        let publicKey = try WatchAddressPublicKey(data: address.lockingScriptPayload, scriptType: address.scriptType)
+
+        try self.init(
+            extendedKey: nil,
+            watchAddressPublicKey: publicKey,
+            purpose: purpose,
+            walletID: walletID,
+            syncMode: syncMode,
+            hasher: hasher,
+            networkType: networkType,
+            confirmationsThreshold: confirmationsThreshold,
+            logger: logger
+        )
+
+        bitcoinCore.prepend(addressConverter: bech32AddressConverter)
+    }
+
     private init(
         extendedKey: HDExtendedKey?,
         watchAddressPublicKey: WatchAddressPublicKey?,
         purpose: Purpose,
-        walletId: String,
+        walletID: String,
         syncMode: BitcoinCore.SyncMode = .api,
         hasher: ((Data) -> Data)?,
         networkType: NetworkType = .mainNet,
@@ -67,12 +184,13 @@ public class Kit: AbstractKit {
     ) throws {
         let network = networkType.network
         let logger = logger ?? Logger(minLogLevel: .verbose)
-        let databaseFilePath = try DirectoryHelper.directoryUrl(for: Kit.name).appendingPathComponent(Kit.databaseFileName(
-            walletId: walletId,
-            networkType: networkType,
-            purpose: purpose,
-            syncMode: syncMode
-        )).path
+        let databaseFilePath = try DirectoryHelper.directoryURL(for: Kit.name)
+            .appendingPathComponent(Kit.databaseFileName(
+                walletID: walletID,
+                networkType: networkType,
+                purpose: purpose,
+                syncMode: syncMode
+            )).path
         let storage = GrdbStorage(databaseFilePath: databaseFilePath)
         let apiSyncStateManager = ApiSyncStateManager(
             storage: storage,
@@ -80,11 +198,11 @@ public class Kit: AbstractKit {
         )
 
         let apiTransactionProvider: IApiTransactionProvider
-        let blockchairApi = BlockchairApi(chainId: network.blockchairChainId, logger: logger)
+        let blockchairApi = BlockchairApi(chainID: network.blockchairChainID, logger: logger)
         let sendType = BitcoinCore.SendType.api(blockchairApi: blockchairApi)
         switch networkType {
         case .mainNet:
-            let apiTransactionProviderUrl = "https://ltc.blocksdecoded.com/api"
+            let apiTransactionProviderURL = "https://ltc.blocksdecoded.com/api"
 
             if case .blockchair = syncMode {
                 let blockchairBlockHashFetcher = BlockchairBlockHashFetcher(blockchairApi: blockchairApi)
@@ -92,7 +210,7 @@ public class Kit: AbstractKit {
                     blockchairApi: blockchairApi,
                     blockHashFetcher: blockchairBlockHashFetcher
                 )
-                let bCoinApiProvider = BCoinApi(url: apiTransactionProviderUrl, logger: logger)
+                let bCoinApiProvider = BCoinApi(url: apiTransactionProviderURL, logger: logger)
 
                 apiTransactionProvider = BiApiBlockProvider(
                     restoreProvider: bCoinApiProvider,
@@ -100,7 +218,7 @@ public class Kit: AbstractKit {
                     apiSyncStateManager: apiSyncStateManager
                 )
             } else {
-                apiTransactionProvider = BCoinApi(url: apiTransactionProviderUrl, logger: logger)
+                apiTransactionProvider = BCoinApi(url: apiTransactionProviderURL, logger: logger)
             }
 
         case .testNet:
@@ -112,7 +230,10 @@ public class Kit: AbstractKit {
 
         let blockValidatorSet = BlockValidatorSet()
         let hasher = hasher ?? Self.defaultHasher
-        blockValidatorSet.add(blockValidator: ProofOfWorkValidator(hasher: hasher, difficultyEncoder: difficultyEncoder))
+        blockValidatorSet.add(blockValidator: ProofOfWorkValidator(
+            hasher: hasher,
+            difficultyEncoder: difficultyEncoder
+        ))
 
         let blockValidatorChain = BlockValidatorChain()
         let blockHelper = BlockValidatorHelper(storage: storage)
@@ -150,7 +271,7 @@ public class Kit: AbstractKit {
             .set(extendedKey: extendedKey)
             .set(watchAddressPublicKey: watchAddressPublicKey)
             .set(paymentAddressParser: paymentAddressParser)
-            .set(walletId: walletId)
+            .set(walletID: walletID)
             .set(confirmationsThreshold: confirmationsThreshold)
             .set(peerSize: 10)
             .set(syncMode: syncMode)
@@ -178,138 +299,35 @@ public class Kit: AbstractKit {
             bitcoinCore.add(restoreKeyConverter: KeyHashRestoreKeyConverter(scriptType: .p2tr))
         }
     }
-
-    public convenience init(
-        seed: Data,
-        purpose: Purpose,
-        walletId: String,
-        syncMode: BitcoinCore.SyncMode = .api,
-        hasher: ((Data) -> Data)?,
-        networkType: NetworkType = .mainNet,
-        confirmationsThreshold: Int = 6,
-        logger: Logger?
-    ) throws {
-        let version: HDExtendedKeyVersion =
-            switch purpose {
-            case .bip44: .Ltpv
-            case .bip49: .Mtpv
-            case .bip84: .zprv
-            case .bip86: .xprv
-            }
-        let masterPrivateKey = HDPrivateKey(seed: seed, xPrivKey: version.rawValue)
-
-        try self.init(
-            extendedKey: .private(key: masterPrivateKey),
-            purpose: purpose,
-            walletId: walletId,
-            syncMode: syncMode,
-            hasher: hasher,
-            networkType: networkType,
-            confirmationsThreshold: confirmationsThreshold,
-            logger: logger
-        )
-    }
-
-    public convenience init(
-        extendedKey: HDExtendedKey,
-        purpose: Purpose,
-        walletId: String,
-        syncMode: BitcoinCore.SyncMode = .api,
-        hasher: ((Data) -> Data)?,
-        networkType: NetworkType = .mainNet,
-        confirmationsThreshold: Int = 6,
-        logger: Logger?
-    ) throws {
-        let network = networkType.network
-
-        try self.init(
-            extendedKey: extendedKey,
-            watchAddressPublicKey: nil,
-            purpose: purpose,
-            walletId: walletId,
-            syncMode: syncMode,
-            hasher: hasher,
-            networkType: networkType,
-            confirmationsThreshold: confirmationsThreshold,
-            logger: logger
-        )
-
-        let scriptConverter = ScriptConverter()
-        let bech32AddressConverter = SegWitBech32AddressConverter(
-            prefix: network.bech32PrefixPattern,
-            scriptConverter: scriptConverter
-        )
-
-        bitcoinCore.prepend(addressConverter: bech32AddressConverter)
-    }
-
-    public convenience init(
-        watchAddress: String,
-        purpose: Purpose,
-        walletId: String,
-        syncMode: BitcoinCore.SyncMode = .api,
-        hasher: ((Data) -> Data)?,
-        networkType: NetworkType = .mainNet,
-        confirmationsThreshold: Int = 6,
-        logger: Logger?
-    ) throws {
-        let network = networkType.network
-        let scriptConverter = ScriptConverter()
-        let bech32AddressConverter = SegWitBech32AddressConverter(
-            prefix: network.bech32PrefixPattern,
-            scriptConverter: scriptConverter
-        )
-        let base58AddressConverter = Base58AddressConverter(
-            addressVersion: network.pubKeyHash,
-            addressScriptVersion: network.scriptHash
-        )
-        let parserChain = AddressConverterChain()
-        parserChain.prepend(addressConverter: base58AddressConverter)
-        parserChain.prepend(addressConverter: bech32AddressConverter)
-
-        let address = try parserChain.convert(address: watchAddress)
-        let publicKey = try WatchAddressPublicKey(data: address.lockingScriptPayload, scriptType: address.scriptType)
-
-        try self.init(
-            extendedKey: nil,
-            watchAddressPublicKey: publicKey,
-            purpose: purpose,
-            walletId: walletId,
-            syncMode: syncMode,
-            hasher: hasher,
-            networkType: networkType,
-            confirmationsThreshold: confirmationsThreshold,
-            logger: logger
-        )
-
-        bitcoinCore.prepend(addressConverter: bech32AddressConverter)
-    }
 }
 
 extension Kit {
-    public static func clear(exceptFor walletIdsToExclude: [String] = []) throws {
-        try DirectoryHelper.removeAll(inDirectory: Kit.name, except: walletIdsToExclude)
+    public static func clear(exceptFor walletIDsToExclude: [String] = []) throws {
+        try DirectoryHelper.removeAll(inDirectory: Kit.name, except: walletIDsToExclude)
     }
     
     private static func databaseFileName(
-        walletId: String,
+        walletID: String,
         networkType: NetworkType,
         purpose: Purpose,
         syncMode: BitcoinCore.SyncMode
-    ) -> String {
-        "\(walletId)-\(networkType.rawValue)-\(purpose.description)-\(syncMode)"
+    )
+        -> String {
+        "\(walletID)-\(networkType.rawValue)-\(purpose.description)-\(syncMode)"
     }
     
     private static func addressConverter(purpose: Purpose, network: INetwork) -> AddressConverterChain {
         let addressConverter = AddressConverterChain()
         switch purpose {
-        case .bip44, .bip49:
+        case .bip44,
+             .bip49:
             addressConverter.prepend(addressConverter: Base58AddressConverter(
                 addressVersion: network.pubKeyHash,
                 addressScriptVersion: network.scriptHash
             ))
 
-        case .bip84, .bip86:
+        case .bip84,
+             .bip86:
             let scriptConverter = ScriptConverter()
             addressConverter.prepend(addressConverter: SegWitBech32AddressConverter(
                 prefix: network.bech32PrefixPattern,
@@ -330,7 +348,12 @@ extension Kit {
         )
     }
     
-    public static func firstAddress(extendedKey: HDExtendedKey, purpose: Purpose, networkType: NetworkType) throws -> Address {
+    public static func firstAddress(
+        extendedKey: HDExtendedKey,
+        purpose: Purpose,
+        networkType: NetworkType
+    ) throws
+        -> Address {
         let network = networkType.network
         
         return try BitcoinCore.firstAddress(
