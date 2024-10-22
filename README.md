@@ -1,6 +1,6 @@
 # LitecoinKit
 
-`LitecoinKit` is a package that extends [BitcoinCore.Swift](https://github.com/sunimp/BitcoinCore.Swift) and makes it usable with `Litecoin` Mainnet and Testnet networks. 
+`LitecoinKit` is a package that extends [BitcoinCore](https://github.com/sunimp/BitcoinCore.Swift) and makes it usable with `Litecoin` Mainnet and Testnet networks. 
 
 ## Requirements
 
