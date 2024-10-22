@@ -1,5 +1,6 @@
 //
 //  Kit.swift
+//  LitecoinKit
 //
 //  Created by Sun on 2018/8/10.
 //
@@ -9,7 +10,7 @@ import Foundation
 import BitcoinCore
 import HDWalletKit
 import Scrypt
-import WWToolKit
+import SWToolKit
 
 // MARK: - Kit
 
@@ -37,7 +38,7 @@ public class Kit: AbstractKit {
     public static let defaultScryptParams = (length: 32, N: UInt64(1024), r: UInt32(1), p: UInt32(1))
 
     static let defaultHasher: (Data) -> Data = { data in
-        let pass = data.ww.bytes
+        let pass = data.sw.bytes
         let bytes = try? Scrypt.scrypt(
             password: pass,
             salt: pass,

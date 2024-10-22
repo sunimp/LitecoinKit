@@ -3,15 +3,15 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		2FA5D47CFAEB8DB143F27645 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA5DACF4DE83AC5FE512D28 /* Extensions.swift */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		6BC11A5D28EEC7D30001FDF1 /* LitecoinAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BC11A5C28EEC7D30001FDF1 /* LitecoinAdapter.swift */; };
-		6BC11A6128EECBE90001FDF1 /* LitecoinKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6BC11A6028EECBE90001FDF1 /* LitecoinKit */; };
 		A40806092C75FBF0003947F1 /* UIExtensions in Frameworks */ = {isa = PBXBuildFile; productRef = A40806082C75FBF0003947F1 /* UIExtensions */; };
+		A4898AA22CC73922005222FB /* LitecoinKit in Frameworks */ = {isa = PBXBuildFile; productRef = A4898AA12CC73922005222FB /* LitecoinKit */; };
 		D36AAA9823A2125E0065B32B /* BaseAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36AAA7F23A2125D0065B32B /* BaseAdapter.swift */; };
 		D36AAA9923A2125E0065B32B /* SendController.xib in Resources */ = {isa = PBXBuildFile; fileRef = D36AAA8123A2125D0065B32B /* SendController.xib */; };
 		D36AAA9A23A2125E0065B32B /* BalanceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36AAA8223A2125D0065B32B /* BalanceController.swift */; };
@@ -38,7 +38,7 @@
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		6BC11A5C28EEC7D30001FDF1 /* LitecoinAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LitecoinAdapter.swift; sourceTree = "<group>"; };
-		6BC11A5E28EEC7EC0001FDF1 /* LitecoinKit Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LitecoinKit Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6BC11A5E28EEC7EC0001FDF1 /* LitecoinKit-Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "LitecoinKit-Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D36AAA7F23A2125D0065B32B /* BaseAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseAdapter.swift; sourceTree = "<group>"; };
 		D36AAA8123A2125D0065B32B /* SendController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SendController.xib; sourceTree = "<group>"; };
 		D36AAA8223A2125D0065B32B /* BalanceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BalanceController.swift; sourceTree = "<group>"; };
@@ -65,8 +65,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A4898AA22CC73922005222FB /* LitecoinKit in Frameworks */,
 				A40806092C75FBF0003947F1 /* UIExtensions in Frameworks */,
-				6BC11A6128EECBE90001FDF1 /* LitecoinKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,7 +77,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACD21AFB9204008FA782 /* Sources */,
-				6BC11A5E28EEC7EC0001FDF1 /* LitecoinKit Demo.app */,
+				6BC11A5E28EEC7EC0001FDF1 /* LitecoinKit-Example.app */,
 				6BC11A5F28EECBE90001FDF1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -176,11 +176,11 @@
 			);
 			name = "iOS Example";
 			packageProductDependencies = (
-				6BC11A6028EECBE90001FDF1 /* LitecoinKit */,
 				A40806082C75FBF0003947F1 /* UIExtensions */,
+				A4898AA12CC73922005222FB /* LitecoinKit */,
 			);
 			productName = LitecoinKit;
-			productReference = 6BC11A5E28EEC7EC0001FDF1 /* LitecoinKit Demo.app */;
+			productReference = 6BC11A5E28EEC7EC0001FDF1 /* LitecoinKit-Example.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -191,7 +191,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 1540;
+				LastUpgradeCheck = 1600;
 				ORGANIZATIONNAME = CocoaPods;
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
@@ -211,7 +211,8 @@
 			);
 			mainGroup = 607FACC71AFB9204008FA782;
 			packageReferences = (
-				A40806072C75FBF0003947F1 /* XCRemoteSwiftPackageReference "UIExtensions.Swift" */,
+				A40806072C75FBF0003947F1 /* XCRemoteSwiftPackageReference "UIExtensions" */,
+				A4898AA02CC737EC005222FB /* XCLocalSwiftPackageReference "../../LitecoinKit" */,
 			);
 			productRefGroup = 607FACC71AFB9204008FA782;
 			projectDirPath = "";
@@ -387,7 +388,7 @@
 				);
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sunimp.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "LitecoinKit Demo";
+				PRODUCT_NAME = "LitecoinKit-Example";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 			};
@@ -405,7 +406,7 @@
 				);
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.sunimp.$(PRODUCT_NAME:rfc1034identifier)";
-				PRODUCT_NAME = "LitecoinKit Demo";
+				PRODUCT_NAME = "LitecoinKit-Example";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 5.0;
 			};
@@ -434,26 +435,34 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		A4898AA02CC737EC005222FB /* XCLocalSwiftPackageReference "../../LitecoinKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../../LitecoinKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
-		A40806072C75FBF0003947F1 /* XCRemoteSwiftPackageReference "UIExtensions.Swift" */ = {
+		A40806072C75FBF0003947F1 /* XCRemoteSwiftPackageReference "UIExtensions" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/sunimp/UIExtensions.Swift.git";
+			repositoryURL = "https://github.com/sunimp/UIExtensions.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.3.0;
+				minimumVersion = 1.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6BC11A6028EECBE90001FDF1 /* LitecoinKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LitecoinKit;
-		};
 		A40806082C75FBF0003947F1 /* UIExtensions */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = A40806072C75FBF0003947F1 /* XCRemoteSwiftPackageReference "UIExtensions.Swift" */;
+			package = A40806072C75FBF0003947F1 /* XCRemoteSwiftPackageReference "UIExtensions" */;
 			productName = UIExtensions;
+		};
+		A4898AA12CC73922005222FB /* LitecoinKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A4898AA02CC737EC005222FB /* XCLocalSwiftPackageReference "../../LitecoinKit" */;
+			productName = LitecoinKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

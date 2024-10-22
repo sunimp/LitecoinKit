@@ -1,5 +1,6 @@
 //
 //  TestNet.swift
+//  LitecoinKit
 //
 //  Created by Sun on 2018/8/23.
 //

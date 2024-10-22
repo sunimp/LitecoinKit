@@ -16,17 +16,17 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/greymass/swift-scrypt.git", from: "1.0.2"),
-        .package(url: "https://github.com/sunimp/BitcoinCore.Swift.git", .upToNextMajor(from: "3.2.0")),
-        .package(url: "https://github.com/sunimp/WWToolKit.Swift.git", .upToNextMajor(from: "2.2.0")),
-        .package(url: "https://github.com/nicklockwood/SwiftFormat.git", from: "0.54.3"),
+        .package(url: "https://github.com/sunimp/BitcoinCore.git", .upToNextMajor(from: "1.0.0")),
+        .package(url: "https://github.com/sunimp/SWToolKit.git", .upToNextMajor(from: "1.0.0")),
+        .package(url: "https://github.com/nicklockwood/SwiftFormat.git", from: "0.54.6"),
     ],
     targets: [
         .target(
             name: "LitecoinKit",
             dependencies: [
                 .product(name: "Scrypt", package: "swift-scrypt"),
-                .product(name: "BitcoinCore", package: "BitcoinCore.Swift"),
-                .product(name: "WWToolKit", package: "WWToolKit.Swift"),
+                "BitcoinCore",
+                "SWToolKit",
             ]
         ),
     ]

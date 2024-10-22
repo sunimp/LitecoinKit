@@ -9,7 +9,7 @@ import Foundation
 
 import BitcoinCore
 import HDWalletKit
-import WWToolKit
+import SWToolKit
 import LitecoinKit
 
 class LitecoinAdapter: BaseAdapter {
